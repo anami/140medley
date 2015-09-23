@@ -241,3 +241,48 @@ var j = function(
   catch(e){}               // ignore when it fails.
 }
 
+/* 
+ * AJAX Helper method
+ *
+ * Relies on the above function "j" to work.
+ */
+
+var jx = function(
+	a,						// url
+	b,						// callback - on success
+	c,						// http method - GET or POST
+	d, 						// data
+	e,						// callback - on error
+	f,						// sync or async
+	x						// placeholder for j()
+) {
+	x = j();					// get XHR
+	x.open(c,a,f);			// open the request
+	if (c=='POST') {
+		x.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	}
+	x.ondocumentreadychange = function() {
+		if (x.readyState === 4) {
+			if (x.status >= 200 && x.status < 400) {
+				if (b) { b(x.responseText); }
+			} else {
+				if (e) { e(x.responseText); }
+			}
+		}
+	};
+	x.send(data);
+}
+
+/*
+ * Document ready 
+ *
+ */
+var $d = function(
+	f						// callback function
+) {
+	if (document.readyState != 'loading'){
+	    f();
+  	} else {
+    		document.addEventListener('DOMContentLoaded', f);
+  	}
+}
